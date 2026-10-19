@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Distance or Displacement? Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EEF3F8;--paper:#FFFFFF;--ink:#12263F;--muted:#4A5F76;--grid:#C9D6E3;--dist:#C2255C;--disp:#0B63CE;--ok:#16794A;--bad:#B42318;--soft:#E1EBF5;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1A2B;--paper:#15263B;--ink:#E8F0F8;--muted:#A3B6CA;--grid:#2C415A;--dist:#FF7AA5;--disp:#6DB1FF;--ok:#4ADE80;--bad:#FF8A80;--soft:#1D3250;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1A2B;--paper:#15263B;--ink:#E8F0F8;--muted:#A3B6CA;--grid:#2C415A;--dist:#FF7AA5;--disp:#6DB1FF;--ok:#4ADE80;--bad:#FF8A80;--soft:#1D3250;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.5 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:940px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:clamp(1.8rem,5vw,2.6rem);line-height:1.1;margin:6px 0 14px}
+.keys{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.key{background:var(--paper);border-radius:12px;padding:12px 14px;border-left:8px solid}
+.key.d{border-color:var(--dist)}.key.p{border-color:var(--disp)}
+.key h2{font-size:1.15rem;margin:0 0 2px}
+.key.d h2{color:var(--dist)}.key.p h2{color:var(--disp)}
+.key p{margin:0;color:var(--muted)}
+[role=tablist]{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+[role=tab]{font:inherit;font-weight:700;min-height:44px;padding:8px 18px;border-radius:999px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+[role=tab][aria-selected=true]{background:var(--ink);color:var(--paper)}
+.card{background:var(--paper);border:1px solid var(--grid);border-radius:16px;padding:16px}
+.card h2{margin:0 0 4px;font-size:1.3rem}
+.sub{color:var(--muted);margin:0 0 12px}
+.btn{font:inherit;font-weight:700;min-height:44px;padding:8px 16px;border-radius:10px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer}
+.btn.pri{background:var(--ink);color:var(--paper)}
+.btn.d{border-color:var(--dist);color:var(--dist)}.btn.p{border-color:var(--disp);color:var(--disp)}
+.btn:disabled{opacity:.5;cursor:default}
+.btn:hover:not(:disabled){background:var(--soft)}.btn.pri:hover:not(:disabled){background:var(--ink);opacity:.85}
+:focus-visible{outline:3px solid var(--disp);outline-offset:2px}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.gl{stroke:var(--grid);stroke-width:1}
+.trail{fill:none;stroke:var(--dist);stroke-width:6;stroke-dasharray:.1 11;stroke-linecap:round;stroke-linejoin:round}
+.disp{stroke:var(--disp);stroke-width:4;stroke-linecap:round}
+.fdisp{fill:var(--disp)}.fdist{fill:var(--dist)}
+.txt{fill:var(--muted);font:700 13px "Atkinson Hyperlegible",system-ui,sans-serif}
+.pt{fill:transparent;cursor:pointer}.pt:hover{fill:var(--soft)}.pt:focus-visible{outline:none;stroke:var(--disp);stroke-width:3}
+.ros{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ro{border:2px solid;border-radius:12px;padding:10px 14px}
+.ro.d{border-color:var(--dist)}.ro.p{border-color:var(--disp)}
+.ro small{font-weight:700}.ro.d small{color:var(--dist)}.ro.p small{color:var(--disp)}
+.ro b{display:block;font-size:1.6rem;line-height:1.2}
+.ro span{color:var(--muted);font-size:.95rem}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{min-height:1.5em;margin:8px 0 0}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.q{font-size:1.25rem;margin:10px 0 14px}
+.score{margin-left:auto;font-weight:700;color:var(--muted)}
+.inputs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:12px 0}
+label{display:block;font-weight:700;font-size:.95rem}
+input,select{display:block;width:100%;margin-top:4px;min-height:44px;font:inherit;padding:6px 10px;border-radius:10px;border:2px solid var(--grid);background:var(--bg);color:var(--ink)}
+@media (max-width:620px){.keys,.ros,.inputs{grid-template-columns:1fr}}
+.topics{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.btn[aria-pressed=true]:hover{background:var(--ink)}
+.time{max-width:300px;margin:10px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="ttl">Distance or displacement?</h1>
+  <div class="topics" role="group" aria-label="Topic">
+    <button class="btn" data-m="dd" aria-pressed="true">Distance &amp; displacement</button>
+    <button class="btn" data-m="sv" aria-pressed="false">Speed &amp; velocity</button>
+  </div>
+  <div class="keys">
+    <div class="key d"><h2 id="kh1">Distance</h2><p id="kp1">All the ground you cover along your path. It has no direction.</p></div>
+    <div class="key p"><h2 id="kh2">Displacement</h2><p id="kp2">The straight-line gap from start to finish, with a direction.</p></div>
+  </div>
+
+  <div role="tablist" aria-label="Practice modes">
+    <button role="tab" id="tabE" aria-selected="true" data-p="explore">1. Explore</button>
+    <button role="tab" id="tabS" aria-selected="false" data-p="sort">2. Sort</button>
+    <button role="tab" id="tabC" aria-selected="false" data-p="chal">3. Solve</button>
+  </div>
+
+  <section id="explore" class="card" role="tabpanel">
+    <h2>Walk the map</h2>
+    <p class="sub">Tap a point to walk there along a gridline. Tap more points to turn. Then try walking back to the start.</p>
+    <svg id="map" viewBox="0 0 500 368" role="group" aria-label="Grid map"></svg>
+    <label class="time" id="etime" hidden>Time for the whole walk, in seconds (1 square = 1 m)<input id="tm" type="number" min="1" value="10" inputmode="decimal"></label>
+    <div class="ros">
+      <div class="ro d"><small id="rl1">Distance walked</small><b id="rd">0 units</b><span id="rs1">Path length, no direction</span></div>
+      <div class="ro p"><small id="rl2">Displacement</small><b id="rp">0 units</b><span id="rpd">Straight line from start to now</span></div>
+    </div>
+    <div class="row"><button class="btn" id="undo">Undo last leg</button><button class="btn" id="reset">Start over</button></div>
+    <p class="msg" id="emsg" aria-live="polite"></p>
+  </section>
+
+  <section id="sort" class="card" role="tabpanel" hidden>
+    <div class="row"><h2>Which one is it?</h2><span class="score" id="sscore"></span></div>
+    <p class="sub" id="ssub">Does the statement describe distance (the path) or displacement (start to finish, with direction)?</p>
+    <p class="q" id="sq"></p>
+    <div class="row" id="sbtns"><button class="btn d" id="sb1" data-a="distance">Distance</button><button class="btn p" id="sb2" data-a="displacement">Displacement</button></div>
+    <p class="msg" id="sfb" aria-live="polite"></p>
+    <div class="row"><button class="btn pri" id="snext" hidden>Next statement</button></div>
+  </section>
+
+  <section id="chal" class="card" role="tabpanel" hidden>
+    <div class="row"><h2>Work it out</h2><span class="score" id="cscore"></span></div>
+    <p class="q" id="story"></p>
+    <div id="cline"></div>
+    <div class="inputs">
+      <label><span id="cl1">Distance (m)</span><input id="cd" type="number" inputmode="decimal"></label>
+      <label><span id="cl2">Displacement size (m)</span><input id="cm" type="number" inputmode="decimal"></label>
+      <label>Displacement direction<select id="cdir"></select></label>
+    </div>
+    <div class="row">
+      <button class="btn pri" id="ccheck">Check answers</button>
+      <button class="btn" id="cshow" hidden>Show answer</button>
+      <button class="btn pri" id="cnext" hidden>Next problem</button>
+    </div>
+    <div class="msg" id="cfb" aria-live="polite"></div>
+  </section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);let MODE='dd';
+const tabs=[...document.querySelectorAll('[role=tab]')];
+tabs.forEach(t=>t.onclick=()=>{tabs.forEach(x=>{const on=x===t;x.setAttribute('aria-selected',on);$('#'+x.dataset.p).hidden=!on;});});
+const fmt=n=>String(Math.round(n*10)/10);
+const arrow=(x1,y1,x2,y2,cls)=>{const a=Math.atan2(y2-y1,x2-x1),s=11,h=(d)=>`${x2-s*Math.cos(a-d)},${y2-s*Math.sin(a-d)}`;return `<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/><polygon class="${cls==='disp'?'fdisp':'fdist'}" points="${x2},${y2} ${h(.45)} ${h(-.45)}"/>`;};
+
+/* ---------- Explore ---------- */
+const C=44,M=30,COLS=11,ROWS=8,S={i:1,j:5};
+let path=[{...S}];
+const px=i=>M+i*C,py=j=>M+j*C;
+const NAMES=['east','northeast','north','northwest','west','southwest','south','southeast'];
+function drawMap(){
+  let g='';
+  for(let i=0;i<COLS;i++)g+=`<line class="gl" x1="${px(i)}" y1="${py(0)}" x2="${px(i)}" y2="${py(ROWS-1)}"/>`;
+  for(let j=0;j<ROWS;j++)g+=`<line class="gl" x1="${px(0)}" y1="${py(j)}" x2="${px(COLS-1)}" y2="${py(j)}"/>`;
+  g+=`<text class="txt" x="250" y="18" text-anchor="middle">North</text><text class="txt" x="250" y="360" text-anchor="middle">South</text><text class="txt" x="14" y="${py(3.5)}" text-anchor="middle" transform="rotate(-90 14 ${py(3.5)})">West</text><text class="txt" x="487" y="${py(3.5)}" text-anchor="middle" transform="rotate(90 487 ${py(3.5)})">East</text>`;
+  g+=`<polyline class="trail" points="${path.map(p=>px(p.i)+','+py(p.j)).join(' ')}"/>`;
+  const c=path[path.length-1];
+  if(c.i!==S.i||c.j!==S.j)g+=arrow(px(S.i),py(S.j),px(c.i),py(c.j),'disp');
+  g+=`<circle cx="${px(S.i)}" cy="${py(S.j)}" r="9" fill="var(--ink)"/><text class="txt" x="${px(S.i)}" y="${py(S.j)+26}" text-anchor="middle" style="fill:var(--ink)">Start</text>`;
+  if(path.length>1)g+=`<circle cx="${px(c.i)}" cy="${py(c.j)}" r="9" fill="var(--paper)" stroke="var(--dist)" stroke-width="4"/>`;
+  for(let i=0;i<COLS;i++)for(let j=0;j<ROWS;j++)g+=`<circle class="pt" tabindex="0" role="button" aria-label="Walk to column ${i+1}, row ${j+1}" data-i="${i}" data-j="${j}" cx="${px(i)}" cy="${py(j)}" r="16"/>`;
+  $('#map').innerHTML=g;
+}
+function readout(){if(MODE==='sv')return readoutSV();
+  let d=0;for(let k=1;k<path.length;k++)d+=Math.abs(path[k].i-path[k-1].i)+Math.abs(path[k].j-path[k-1].j);
+  const c=path[path.length-1],dx=c.i-S.i,dy=S.j-c.j,m=Math.hypot(dx,dy);
+  $('#rd').textContent=d+' units';
+  if(m===0){$('#rp').textContent='0 units';$('#rpd').textContent=path.length>1?'You’re back at the start, so there’s no direction':'Straight line from start to now';}
+  else{
+    const dir=NAMES[((Math.round(Math.atan2(dy,dx)/(Math.PI/4))%8)+8)%8];
+    const parts=[];if(dx)parts.push(Math.abs(dx)+(dx>0?' east':' west'));if(dy)parts.push(Math.abs(dy)+(dy>0?' north':' south'));
+    $('#rp').textContent=fmt(m)+' units '+dir;$('#rpd').textContent='Net move: '+parts.join(' and ');
+  }
+  $('#emsg').className='msg';
+  if(path.length>1&&!$('#emsg').dataset.err){
+    $('#emsg').textContent=m===0?`You walked ${d} units but ended where you started, so displacement is zero.`:d===m?'You walked straight, so distance and displacement are the same size.':'Distance is bigger because you walked around instead of going straight to the finish.';
+  }
+}
+function updateMap(msg){const e=$('#emsg');if(msg){e.dataset.err=1;e.textContent=msg;e.className='msg bad';}else{delete e.dataset.err;e.textContent='';}drawMap();if(!msg)readout();}
+function go(i,j){
+  const l=path[path.length-1];if(i===l.i&&j===l.j)return;
+  if(i!==l.i&&j!==l.j){updateMap('Pick a point in the same row or column as your last stop, so you walk along a gridline.');return;}
+  path.push({i,j});updateMap();
+}
+$('#map').addEventListener('click',e=>{const t=e.target.closest('.pt');if(t)go(+t.dataset.i,+t.dataset.j);});
+$('#map').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const t=e.target.closest('.pt');if(t){e.preventDefault();go(+t.dataset.i,+t.dataset.j);}}});
+$('#undo').onclick=()=>{if(path.length>1)path.pop();updateMap();};
+$('#reset').onclick=()=>{path=[{...S}];updateMap();};
+updateMap();
+
+/* ---------- Sort ---------- */
+const ITEMS_DD=[
+ {t:'The odometer on the family car shows 18 miles driven on the trip.',a:'distance',e:'An odometer counts every mile along the road. That’s the length of the path, so it’s distance.'},
+ {t:'A hiker ends up 3 km northeast of her camp.',a:'displacement',e:'It gives a straight-line gap from the start and a direction, so it’s displacement.'},
+ {t:'A dog runs 20 m across the yard, turns, and runs 20 m back. Total ground covered: 40 m.',a:'distance',e:'Total ground covered along the path is distance.'},
+ {t:'After one full lap of a 400 m track, a runner’s change in position is 0 m.',a:'displacement',e:'Same start and finish means displacement is zero, even though the runner covered 400 m of distance.'},
+ {t:'A plane lands 800 km west of where it took off.',a:'displacement',e:'It names a direction (west) and compares the start to the finish.'},
+ {t:'An ant crawls 12 cm along a winding stick.',a:'distance',e:'The ant followed a curvy path and the number is the length of that path, so it’s distance.'},
+ {t:'A ball drops 5 m straight down from a balcony.',a:'displacement',e:'It gives how far the ball ended up from where it began, plus a direction (down).'},
+ {t:'Walking the long way around the lake takes 6 km of trail.',a:'distance',e:'The length of the trail walked is distance. The straight-line gap across the lake would be smaller.'}
+];
+const ITEMS_SV=[
+ {t:'A car’s speedometer reads 55 miles per hour.',a:'speed',e:'It tells how fast the car is going but not which way. That’s speed.'},
+ {t:'A cyclist rides at 12 m/s north.',a:'velocity',e:'It gives how fast and a direction (north), so it’s velocity.'},
+ {t:'A snail crawls at 0.01 m/s.',a:'speed',e:'Only how fast is given, with no direction. That’s speed.'},
+ {t:'A plane flies at 900 km/h due west.',a:'velocity',e:'The direction (west) turns a speed into a velocity.'},
+ {t:'A runner finishes a lap back at the start line, so her average velocity is 0 m/s.',a:'velocity',e:'Her displacement is zero, so her average velocity is zero. Her average speed would not be zero.'},
+ {t:'A cheetah sprints at 30 m/s.',a:'speed',e:'No direction is given, so it’s speed.'},
+ {t:'A ball falls at 9 m/s downward.',a:'velocity',e:'“Downward” is a direction, so this is velocity.'},
+ {t:'A swimmer covers 100 m of pool in 50 s, an average of 2 m/s.',a:'speed',e:'Distance divided by time with no direction is average speed.'}
+];
+let ITEMS=ITEMS_DD;
+let order,si,ss,sa;
+function sortStart(){order=[...ITEMS].sort(()=>Math.random()-.5);si=0;ss=0;sa=false;sortShow();}
+function sortShow(){
+  if(si>=order.length){$('#sq').textContent=`All done! You got ${ss} of ${order.length} right on the first try.`;$('#sbtns').hidden=true;$('#sfb').textContent='';$('#snext').hidden=false;$('#snext').textContent='Play again';$('#sscore').textContent='';return;}
+  $('#sbtns').hidden=false;$('#sq').textContent='“'+order[si].t+'”';$('#sfb').textContent='';$('#snext').hidden=true;$('#snext').textContent='Next statement';
+  $('#sscore').textContent=`Statement ${si+1} of ${order.length}  ·  Score ${ss}`;sa=false;
+  document.querySelectorAll('#sbtns .btn').forEach(b=>b.disabled=false);
+}
+$('#sbtns').onclick=e=>{
+  const b=e.target.closest('.btn');if(!b||sa)return;
+  const it=order[si],good=b.dataset.a===it.a;
+  if(good){sa=true;ss++;$('#sfb').className='msg ok';$('#sfb').textContent='Correct. '+it.e;$('#snext').hidden=false;}
+  else{$('#sfb').className='msg bad';$('#sfb').innerHTML='Not quite. Ask yourself: does it measure the whole path, or only start to finish with a direction? Try the other one.';
+    b.disabled=true;ss=ss;sa=false;it.miss=true;}
+  if(good&&it.miss){ss--;}
+  $('#sscore').textContent=`Statement ${si+1} of ${order.length}  ·  Score ${ss}`;
+};
+$('#snext').onclick=()=>{if(si>=order.length){ITEMS.forEach(i=>delete i.miss);sortStart();}else{si++;sortShow();}};
+sortStart();
+
+/* ---------- Solve ---------- */
+const NM=['Maya','Jamal','Sofia','Diego','Aaliyah','Ben','Priya','Marcus','Tessa','Omar'];
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const cap=s=>s[0].toUpperCase()+s.slice(1);
+let ch,att,done,cs=0,ct=0;
+function newCh(){
+  const vert=Math.random()<.4,plus=vert?'north':'east',minus=vert?'south':'west';
+  const n=rnd(2,3);let legs=[(Math.random()<.5?1:-1)*rnd(3,9)];
+  for(let k=1;k<n;k++)legs.push((Math.random()<.65?-1:1)*Math.sign(legs[k-1])*rnd(2,8));
+  if(Math.random()<.2)legs=[legs[0],-legs[0]];
+  let net=legs.reduce((a,b)=>a+b,0);
+  if(net===0&&legs.length===3){legs[2]+=Math.sign(legs[2]);net=legs.reduce((a,b)=>a+b,0);}
+  ch={vert,plus,minus,legs,net,D:legs.reduce((a,b)=>a+Math.abs(b),0),M:Math.abs(net),dirAns:net===0?'none':net>0?plus:minus,name:NM[rnd(0,NM.length-1)]};
+  att=0;done=false;pickTime();
+  const words=legs.map(l=>`${Math.abs(l)} m ${l>0?plus:minus}`);
+  $('#story').textContent=`${ch.name} walks ${words.join(', then ')}${MODE==='sv'?` in ${ch.t} seconds`:''}.${MODE==='sv'&&(ch.D%ch.t||ch.M%ch.t)?' Round to the nearest tenth.':''}`;
+  $('#cline').innerHTML=lineSVG(false);
+  $('#cd').value='';$('#cm').value='';$('#cl1').textContent=TOP[MODE].cl[0];$('#cl2').textContent=TOP[MODE].cl[1];
+  $('#cdir').innerHTML=`<option value="">Choose…</option><option value="${plus}">${cap(plus)}</option><option value="${minus}">${cap(minus)}</option><option value="none">No direction (back at start)</option>`;
+  $('#cfb').innerHTML='';$('#cnext').hidden=true;$('#cshow').hidden=true;$('#ccheck').hidden=false;
+  updScore();
+}
+function lineSVG(reveal){
+  const {vert,legs}=ch,pos=[0];legs.forEach(l=>pos.push(pos[pos.length-1]+l));
+  const mn=Math.min(...pos),mx=Math.max(...pos),span=Math.max(mx-mn,1);
+  const W=520,H=vert?300:70+legs.length*26+34;
+  const a=p=>vert?H-30-(p-mn)/span*(H-60):50+(p-mn)/span*(W-100);
+  const cr=k=>vert?110+k*34:46+k*26;
+  const P=(p,c)=>vert?[c,a(p)]:[a(p),c];
+  let g='';const last=cr(legs.length)+4;
+  [[pos[0],'Start'],[pos[pos.length-1],'End']].forEach(([p,lb],idx)=>{
+    const s=P(p,vert?70:30),e=P(p,last+(reveal?30:0));
+    g+=`<line class="gl" style="stroke-dasharray:4 4;stroke:var(--muted)" x1="${s[0]}" y1="${s[1]}" x2="${e[0]}" y2="${e[1]}"/>`;
+    g+=vert?`<text class="txt" x="${s[0]-6}" y="${s[1]+4+(idx&&p===pos[0]?14:0)}" text-anchor="end">${lb}</text>`:`<text class="txt" x="${s[0]}" y="${s[1]-6-(idx&&p===pos[0]?14:0)}" text-anchor="middle">${lb}</text>`;
+  });
+  legs.forEach((l,k)=>{
+    const s=P(pos[k],cr(k)),e=P(pos[k+1],cr(k));g+=arrow(s[0],s[1],e[0],e[1],'trail2');
+    const m=P((pos[k]+pos[k+1])/2,cr(k));
+    g+=vert?`<text class="txt" x="${m[0]+10}" y="${m[1]+4}">${Math.abs(l)} m</text>`:`<text class="txt" x="${m[0]}" y="${m[1]-8}" text-anchor="middle">${Math.abs(l)} m</text>`;
+  });
+  if(reveal&&ch.net!==0){const c=last+16,s=P(0,c),e=P(ch.net,c);g+=arrow(s[0],s[1],e[0],e[1],'disp');}
+  g+=vert?`<text class="txt" x="${W-6}" y="16" text-anchor="end">North</text><text class="txt" x="${W-6}" y="${H-6}" text-anchor="end">South</text>`:`<text class="txt" x="8" y="${H-6}">West</text><text class="txt" x="${W-8}" y="${H-6}" text-anchor="end">East</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" style="max-width:${vert?360:W}px" role="img" aria-label="Diagram of each leg of the walk"><style>.trail2{stroke:var(--dist);stroke-width:4;stroke-linecap:round}</style>${g}</svg>`;
+}
+function updScore(){$('#cscore').textContent=`Score ${cs} of ${ct}`;}
+function explain(){if(MODE==='sv')return explainSV();
+  const d=ch.legs.map(l=>Math.abs(l)).join(' + ');
+  return `<div><b style="color:var(--dist)">Distance:</b> ${d} = ${ch.D} m, because every leg counts.</div><div><b style="color:var(--disp)">Displacement:</b> ${ch.net===0?'0 m. The finish is the same spot as the start.':`${ch.M} m ${ch.dirAns}. Compare where ${ch.name} started with where ${ch.name} ended.`}</div>`;
+}
+function finish(good){
+  done=true;$('#cline').innerHTML=lineSVG(true);
+  $('#cfb').innerHTML=(good?'<div class="ok"><b>All correct!</b></div>':'')+explain();
+  $('#cnext').hidden=false;$('#cshow').hidden=true;$('#ccheck').hidden=true;updScore();
+}
+$('#ccheck').onclick=()=>{
+  if(done)return;
+  const a=$('#cd').value===''?NaN:+$('#cd').value,b=$('#cm').value===''?NaN:+$('#cm').value,r=$('#cdir').value;
+  if(isNaN(a)||isNaN(b)||!r){$('#cfb').innerHTML='<div class="bad">Fill in all three boxes first.</div>';return;}
+  const o=[Math.abs(a-ch.aD)<.051,Math.abs(b-ch.aM)<.051,r===ch.dirAns];
+  if(att===0){ct++;if(o.every(Boolean))cs++;}
+  att++;
+  if(o.every(Boolean)){finish(true);return;}
+  const msgs=MODE==='sv'?SVMSG:[['Distance','add up every leg, whichever way it goes.'],['Displacement size','compare only the start and the finish.'],['Direction','which way is the finish from the start?']];
+  $('#cfb').innerHTML=msgs.map((m,i)=>o[i]?`<div class="ok">✓ ${m[0]} is right.</div>`:`<div class="bad">✗ ${m[0]}: ${m[1]}</div>`).join('');
+  $('#cshow').hidden=false;updScore();
+};
+$('#cshow').onclick=()=>{if(att===0){ct++;att++;}finish(false);};
+$('#cnext').onclick=newCh;
+
+/* ---------- Speed & velocity mode ---------- */
+const SVMSG=[['Speed','divide the total distance (every leg) by the time.'],['Velocity size','divide the displacement (start to finish) by the time.'],['Direction','velocity points the way the finish is from the start.']];
+const TOP={
+ dd:{ttl:'Distance or displacement?',k:[['Distance','All the ground you cover along your path. It has no direction.'],['Displacement','The straight-line gap from start to finish, with a direction.']],ex:['Distance walked','Displacement','Path length, no direction'],sub:'Does the statement describe distance (the path) or displacement (start to finish, with direction)?',b:['distance','displacement'],cl:['Distance (m)','Displacement size (m)']},
+ sv:{ttl:'Speed or velocity?',k:[['Speed','How fast you move: distance divided by time. It has no direction.'],['Velocity','Speed with a direction: displacement divided by time.']],ex:['Average speed','Average velocity','Distance ÷ time, no direction'],sub:'Does the statement describe speed (how fast) or velocity (how fast and which way)?',b:['speed','velocity'],cl:['Average speed (m/s)','Average velocity size (m/s)']}
+};
+function pickTime(){
+  let t=0;const sv=MODE==='sv';
+  if(sv){const c=[2,3,4,5,6,8,10];for(let k=0;k<40;k++){t=c[rnd(0,c.length-1)];if(ch.D%t===0&&ch.M%t===0)break;}}
+  ch.t=t;ch.aD=sv?ch.D/t:ch.D;ch.aM=sv?ch.M/t:ch.M;
+}
+function explainSV(){
+  const d=ch.legs.map(l=>Math.abs(l)).join(' + ');
+  return `<div><b style="color:var(--dist)">Speed:</b> total distance (${d} = ${ch.D} m) ÷ ${ch.t} s = ${fmt(ch.aD)} m/s.</div><div><b style="color:var(--disp)">Velocity:</b> ${ch.net===0?'0 m/s. Displacement is 0 m, so there’s no direction.':`displacement ${ch.M} m ÷ ${ch.t} s = ${fmt(ch.aM)} m/s ${ch.dirAns}.`}</div>`;
+}
+function readoutSV(){
+  const t=Math.max(+$('#tm').value||1,.1);let d=0;
+  for(let k=1;k<path.length;k++)d+=Math.abs(path[k].i-path[k-1].i)+Math.abs(path[k].j-path[k-1].j);
+  const c=path[path.length-1],dx=c.i-S.i,dy=S.j-c.j,m=Math.hypot(dx,dy);
+  $('#rd').textContent=fmt(d/t)+' m/s';$('#rs1').textContent=`${d} m ÷ ${fmt(t)} s`;
+  if(m===0){$('#rp').textContent='0 m/s';$('#rpd').textContent=path.length>1?'Back at the start, so no direction':'Net move ÷ time';}
+  else{
+    const dir=NAMES[((Math.round(Math.atan2(dy,dx)/(Math.PI/4))%8)+8)%8],parts=[];
+    if(dx)parts.push(Math.abs(dx)+(dx>0?' east':' west'));
+    if(dy)parts.push(Math.abs(dy)+(dy>0?' north':' south'));
+    $('#rp').textContent=fmt(m/t)+' m/s '+dir;$('#rpd').textContent=`${fmt(m)} m ÷ ${fmt(t)} s (net: ${parts.join(' and ')})`;
+  }
+  $('#emsg').className='msg';
+  if(path.length>1)$('#emsg').textContent=m===0?`Your velocity is 0 m/s because you ended where you started, even though your speed was ${fmt(d/t)} m/s.`:d===m?'You walked straight, so speed and velocity have the same size.':'Speed is bigger because your path was longer than the straight line to the finish.';
+}
+function setMode(m){
+  MODE=m;const T=TOP[m];
+  document.querySelectorAll('.topics .btn').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));
+  $('#ttl').textContent=T.ttl;$('#kh1').textContent=T.k[0][0];$('#kp1').textContent=T.k[0][1];$('#kh2').textContent=T.k[1][0];$('#kp2').textContent=T.k[1][1];
+  $('#rl1').textContent=T.ex[0];$('#rl2').textContent=T.ex[1];$('#rs1').textContent=T.ex[2];
+  $('#etime').hidden=m!=='sv';$('#ssub').textContent=T.sub;
+  $('#tabE').hidden=m==='sv';$('#tabS').textContent=m==='sv'?'1. Sort':'2. Sort';$('#tabC').textContent=m==='sv'?'2. Solve':'3. Solve';
+  (m==='sv'?$('#tabS'):$('#tabE')).click();
+  $('#sb1').dataset.a=T.b[0];$('#sb1').textContent=cap(T.b[0]);$('#sb2').dataset.a=T.b[1];$('#sb2').textContent=cap(T.b[1]);
+  ITEMS=m==='sv'?ITEMS_SV:ITEMS_DD;ITEMS.forEach(i=>delete i.miss);sortStart();
+  updateMap();newCh();
+}
+document.querySelectorAll('.topics .btn').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+$('#tm').oninput=()=>updateMap();
+newCh();
+</script>
+</body>
+</html>
